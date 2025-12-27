@@ -35,7 +35,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> findById(@Positive(message = "Product ID Must Given And Be a Positive Number.") @PathVariable Long id) {
+    public ResponseEntity<ProductDTO> findById(@Positive(message = "Product ID must be a positive number.") @PathVariable Long id) {
         return productService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -56,14 +56,14 @@ public class ProductController {
             }
     )
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductDTO> update(@Positive(message = "Product ID Must Given And Be a Positive Number.") @PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<ProductDTO> update(@Positive(message = "Product ID must be a positive number.") @PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
         return productService.update(id, productDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@Positive(message = "Product ID Must Given And Be a Positive Number.") @PathVariable Long id) {
+    public ResponseEntity<Void> delete(@Positive(message = "Product ID must be a positive number.") @PathVariable Long id) {
         if (productService.delete(id)) {
             return ResponseEntity.noContent().build();
         }

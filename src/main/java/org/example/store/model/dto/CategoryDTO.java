@@ -1,23 +1,22 @@
 package org.example.store.model.dto;
 
+
 import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@ToString
-public class ProductDTO implements Serializable {
+@ToString(exclude = {"products"})
+public class CategoryDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private String productName;
-    private String description;
-    private BigDecimal price;
-    private Double rating;
     private String categoryName;
+    private String description;
+    private List<ProductDTO> products;
 }

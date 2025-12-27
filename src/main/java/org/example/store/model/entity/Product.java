@@ -1,8 +1,6 @@
 package org.example.store.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.example.store.model.base.BaseEntity;
@@ -35,4 +33,8 @@ public class Product extends BaseEntity {
     @Max(5)
     @NotNull(message = "Product rate is required.")
     private Double rating;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
