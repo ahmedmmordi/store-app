@@ -1,6 +1,7 @@
 package org.example.store.repository;
 
 import org.example.store.model.entity.Order;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -8,15 +9,30 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrderRepo extends JpaRepository<Order, Long> {
-    List<Order> findByTotalAmountBetween(BigDecimal min, BigDecimal max);
-    List<Order> findAllByCustomerId(Long customerId);
-    List<Order> findTop10ByOrderByTotalAmountDesc();
-    List<Order> findByCustomerIdOrderByTotalAmountDesc(Long customerId);
-    Long countByCustomerId(Long customerId);
+    @EntityGraph(attributePaths = {"items", "items.product"})
+    List<Order> findAll();
 
-    @Query(value = "SELECT DISTINCT o.* FROM orders o JOIN order_items i ON o.id = i.order_id WHERE i.product_id = :productId", nativeQuery = true)
+    @EntityGraph(attributePaths = {"items", "items.product"})
+    Optional<Order> findById(Long id);
+
+    @EntityGraph(attributePaths = {"items", "items.product"})
+    List<Order> findByTotalAmountBetween(BigDecimal min, BigDecimal max);
+
+    @EntityGraph(attributePaths = {"items", "items.product"})
+    List<Order> findAllByCustomerId(Long customerId);
+
+    @EntityGraph(attributePaths = {"items", "items.product"})
+    List<Order> findTop10ByOrderByTotalAmountDesc();
+
+    @EntityGraph(attributePaths = {"items", "items.product"})
+    List<Order> findByCustomerIdOrderByTotalAmountDesc(Long customerId);
+
+    @Query("SELECT DISTINCT o FROM Order o JOIN FETCH o.customer c JOIN FETCH o.items i JOIN FETCH i.product p JOIN FETCH p.category WHERE i.product.id = :productId")
     List<Order> findOrdersByProductIdIn(@Param("productId") Long productId);
+
+    Long countByCustomerId(Long customerId);
 }

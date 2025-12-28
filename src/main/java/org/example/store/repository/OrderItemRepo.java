@@ -1,6 +1,7 @@
 package org.example.store.repository;
 
 import org.example.store.model.entity.OrderItem;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,10 @@ import java.util.List;
 
 @Repository
 public interface OrderItemRepo extends JpaRepository<OrderItem, Long> {
+    @EntityGraph(attributePaths = {"order", "order.customer", "product", "product.category"})
     List<OrderItem> findByQuantityGreaterThan(Integer quantity);
+
+    @EntityGraph(attributePaths = {"order", "order.customer", "product", "product.category"})
     List<OrderItem> findByOrderId(Long orderId);
 
     @Query(value = "SELECT SUM(item_quantity) FROM order_items WHERE product_id = :productId", nativeQuery = true)
