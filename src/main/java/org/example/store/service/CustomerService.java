@@ -6,6 +6,8 @@ import org.example.store.mapper.CustomerMapper;
 import org.example.store.model.dto.CustomerDTO;
 import org.example.store.model.entity.Customer;
 import org.example.store.repository.CustomerRepo;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class CustomerService {
     private final CustomerRepo customerRepo;
     private final CustomerMapper customerMapper;
 
+    @Cacheable(value = "allCustomers")
     public List<CustomerDTO> findAll() {
         return customerRepo.findAll()
                 .stream()
@@ -24,6 +27,7 @@ public class CustomerService {
                 .toList();
     }
 
+    @Cacheable(value = "allCustomersByUsername", key = "#username")
     public List<CustomerDTO> findAllByUsername(String username) {
         return customerRepo.findAllByUsernameContainingIgnoreCase(username)
                 .stream()
@@ -31,6 +35,7 @@ public class CustomerService {
                 .toList();
     }
 
+    @Cacheable(value = "allCustomersByEmail", key = "#email")
     public List<CustomerDTO> findAllByEmail(String email) {
         return customerRepo.findAllByEmailContainingIgnoreCase(email)
                 .stream()
@@ -38,16 +43,19 @@ public class CustomerService {
                 .toList();
     }
 
+    @Cacheable(value = "customerById", key = "#id")
     public Optional<CustomerDTO> findById(Long id) {
         return customerRepo.findById(id)
                 .map(customerMapper::toDTO);
     }
 
+    @Cacheable(value = "customerByUsername", key = "#username")
     public Optional<CustomerDTO> findByUsername(String username) {
         return customerRepo.findByUsername(username)
                 .map(customerMapper::toDTO);
     }
 
+    @Cacheable(value = "customerByEmail", key = "#email")
     public Optional<CustomerDTO> findByEmail(String email) {
         return customerRepo.findByEmail(email)
                 .map(customerMapper::toDTO);
@@ -65,12 +73,14 @@ public class CustomerService {
         return customerRepo.existsById(id);
     }
 
+    @CacheEvict(value = {"allCustomers", "allCustomersByUsername", "allCustomersByEmail", "customerById", "customerByUsername", "customerByEmail"}, allEntries = true)
     public CustomerDTO insert(CustomerDTO customerDTO) {
         validateUsernameAndEmail(true, null, customerDTO.getUsername(), customerDTO.getEmail());
         Customer customer = customerMapper.toEntity(customerDTO);
         return customerMapper.toDTO(customerRepo.save(customer));
     }
 
+    @CacheEvict(value = {"allCustomers", "allCustomersByUsername", "allCustomersByEmail", "customerById", "customerByUsername", "customerByEmail"}, allEntries = true)
     public Optional<CustomerDTO> update(Long id, CustomerDTO customerDTO) {
         return customerRepo.findById(id)
                 .map(customer -> {
@@ -83,6 +93,7 @@ public class CustomerService {
                 });
     }
 
+    @CacheEvict(value = {"allCustomers", "allCustomersByUsername", "allCustomersByEmail", "customerById", "customerByUsername", "customerByEmail"}, allEntries = true)
     public boolean delete(Long id) {
         boolean exists = this.existsById(id);
         if (!exists) {

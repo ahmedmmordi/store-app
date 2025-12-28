@@ -7,6 +7,8 @@ import org.example.store.model.entity.Category;
 import org.example.store.model.entity.Product;
 import org.example.store.repository.CategoryRepo;
 import org.example.store.repository.ProductRepo;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,7 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final CategoryRepo categoryRepo;
 
+    @Cacheable(value = "allProducts")
     public List<ProductDTO> findAll() {
         return productRepo.findAll()
                 .stream()
@@ -26,6 +29,7 @@ public class ProductService {
                 .toList();
     }
 
+    @Cacheable(value = "allProductsByName", key = "#productName")
     public List<ProductDTO> findAllByProductName(String productName) {
         return productRepo.findAllByProductNameContainingIgnoreCase(productName)
                 .stream()
@@ -33,6 +37,7 @@ public class ProductService {
                 .toList();
     }
 
+    @Cacheable(value = "productById", key = "#id")
     public Optional<ProductDTO> findById(Long id) {
         return productRepo.findById(id)
                 .map(productMapper::toDTO);
@@ -42,6 +47,7 @@ public class ProductService {
         return productRepo.existsById(id);
     }
 
+    @CacheEvict(value = {"allProducts", "allProductsByName", "productById"}, allEntries = true)
     public ProductDTO insert(ProductDTO productDTO) {
         Product product = productMapper.toEntity(productDTO);
         Category category = getCategoryByName(productDTO.getCategoryName());
@@ -49,6 +55,7 @@ public class ProductService {
         return productMapper.toDTO(productRepo.save(product));
     }
 
+    @CacheEvict(value = {"allProducts", "allProductsByName", "productById"}, allEntries = true)
     public Optional<ProductDTO> update(Long id, ProductDTO productDTO) {
         return productRepo.findById(id)
                 .map(product -> {
@@ -66,6 +73,7 @@ public class ProductService {
                 });
     }
 
+    @CacheEvict(value = {"allProducts", "allProductsByName", "productById"}, allEntries = true)
     public boolean delete(Long id) {
         boolean exists = this.existsById(id);
         if (!exists) {

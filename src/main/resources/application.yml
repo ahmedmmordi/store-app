@@ -37,10 +37,24 @@ spring:
         locations: classpath:db/migration
         baseline-on-migrate: true
 
+    # Redis Cache Configurations
+    cache:
+        type: redis
+        redis:
+            time-to-live: 3600000
+    data:
+        redis:
+          host: ${REDIS_HOST:127.0.0.1}
+          port: ${REDIS_PORT:6379}
+          timeout: 60000
+
 # Logging
 logging:
     level:
-        org.hibernate.SQL: DEBUG
+        org:
+            hibernate.SQL: DEBUG
+            springframework.cache: DEBUG
+            springframework.data.redis.cache: DEBUG
 
 # OpenAPI
 springdoc:
