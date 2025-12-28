@@ -1,9 +1,9 @@
 # Application Name & Config
 spring:
     application:
-      name: Project 1 - Store
+        name: Project 1 - Store
     config:
-      import: optional:file:.env[.properties]
+        import: optional:file:.env[.properties]
 
     # MySQL Connection
     datasource:
@@ -29,7 +29,7 @@ spring:
         show-sql: false
         properties:
             hibernate:
-              format_sql: true
+                format_sql: true
 
     # Flyway Database Migration
     flyway:
@@ -44,9 +44,9 @@ spring:
             time-to-live: 3600000
     data:
         redis:
-          host: ${REDIS_HOST:127.0.0.1}
-          port: ${REDIS_PORT:6379}
-          timeout: 60000
+            host: ${REDIS_HOST:127.0.0.1}
+            port: ${REDIS_PORT:6379}
+            timeout: 60000
 
 # Logging
 logging:
@@ -60,4 +60,6 @@ logging:
 springdoc:
     swagger-ui:
         operationsSorter: method
-
+        path: /swagger
+    api-docs:
+        path: /api-docs
