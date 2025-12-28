@@ -1,5 +1,6 @@
 package org.example.store.controller;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.store.model.dto.DummyProductDTO;
@@ -41,7 +42,7 @@ public class DummyProductController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<DummyProductDTO> getDummyProductById(@PathVariable Integer id) {
+    public Mono<DummyProductDTO> getDummyProductById(@Positive(message = "Dummy Product ID must be a positive number.") @PathVariable Integer id) {
         return dummyProductService.getDummyProductById(id);
     }
 }
