@@ -35,4 +35,7 @@ public interface OrderRepo extends JpaRepository<Order, Long> {
     List<Order> findOrdersByProductIdIn(@Param("productId") Long productId);
 
     Long countByCustomerId(Long customerId);
+
+    @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.customerId = :customerId")
+    BigDecimal sumTotalAmountByCustomerId(@Param("customerId") Long customerId);
 }

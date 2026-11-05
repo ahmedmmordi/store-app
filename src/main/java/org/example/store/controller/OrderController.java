@@ -64,6 +64,11 @@ public class OrderController {
             @Positive(message = "Customer ID must be a positive number.") @PathVariable Long id) {
         return ResponseEntity.ok(orderService.countOrdersByCustomer(id));
     }
+    @GetMapping("/customer/{id}/spending")
+    public ResponseEntity<BigDecimal> sumTotalAmountByCustomerId(
+            @Positive(message = "Customer ID must be a positive number.") @PathVariable Long id) {
+        return ResponseEntity.ok(orderService.sumTotalAmountByCustomerId(id));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> findById(

@@ -55,7 +55,7 @@ public class OrderService {
     public Long countOrdersByCustomer(Long customerId) {
         return orderRepo.countByCustomerId(customerId);
     }
-
+    public BigDecimal sumTotalAmountByCustomerId(Long customerId) {return orderRepo.sumTotalAmountByCustomerId(customerId);}
     public Optional<OrderDTO> findById(Long id) {
         return orderRepo.findById(id).map(orderMapper::toDTO);
     }
