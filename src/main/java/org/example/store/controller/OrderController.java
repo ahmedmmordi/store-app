@@ -87,7 +87,7 @@ public class OrderController {
     public ResponseEntity<Void> delete(
             @Positive(message = "Order ID must be a positive number.") @PathVariable Long id) {
         if (orderService.delete(id)) {
-            ResponseEntity.noContent().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
