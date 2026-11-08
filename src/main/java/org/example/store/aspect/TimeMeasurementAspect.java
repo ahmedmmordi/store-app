@@ -20,13 +20,13 @@ public class TimeMeasurementAspect {
     @Around("execution(* org.example.store.service..*(..))")
     @SuppressWarnings("UnusedReturnValue")
     public Object logTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
         Object returnValue = joinPoint.proceed();
         if (returnValue instanceof Mono<?> mono)
             return logMono(mono, joinPoint);
         else if (returnValue instanceof Flux<?> flux)
             return logFlux(flux, joinPoint);
         else {
-            long startTime = System.currentTimeMillis();
             logMetrics(joinPoint, startTime);
             return returnValue;
         }
