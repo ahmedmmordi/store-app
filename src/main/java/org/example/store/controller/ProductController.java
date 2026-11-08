@@ -40,6 +40,12 @@ public class ProductController {
         return productService.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{categoryId}/category")
+    public ResponseEntity<List<ProductDTO>> findAllByCategoryId(
+            @Positive(message = "Category ID must be a positive number.") @PathVariable Long categoryId) {
+        return ResponseEntity.ok(productService.findAllByCategoryId(categoryId));
+    }
+
     @PostMapping("")
     public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO productDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.insert(productDTO));
