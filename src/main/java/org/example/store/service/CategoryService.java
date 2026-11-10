@@ -5,6 +5,8 @@ import org.example.store.mapper.CategoryMapper;
 import org.example.store.model.dto.CategoryDTO;
 import org.example.store.model.entity.Category;
 import org.example.store.repository.CategoryRepo;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,15 +18,18 @@ public class CategoryService {
     private final CategoryRepo categoryRepo;
     private final CategoryMapper categoryMapper;
 
+    @Cacheable(value = "allCategories")
     public List<CategoryDTO> findAll() {
         return categoryRepo.findAll().stream().map(categoryMapper::toDTO).toList();
     }
 
+    @Cacheable(value = "allCategoriesByName", key = "#categoryName")
     public List<CategoryDTO> findAllByCategoryName(String categoryName) {
         return categoryRepo.findAllByCategoryNameContainingIgnoreCase(categoryName).stream().map(categoryMapper::toDTO)
                 .toList();
     }
 
+    @Cacheable(value = "categoryById", key = "#id")
     public Optional<CategoryDTO> findById(Long id) {
         return categoryRepo.findById(id).map(categoryMapper::toDTO);
     }
@@ -33,11 +38,13 @@ public class CategoryService {
         return categoryRepo.existsById(id);
     }
 
+    @CacheEvict(value = { "allCategories", "allCategoriesByName", "categoryById" }, allEntries = true)
     public CategoryDTO insert(CategoryDTO categoryDTO) {
         Category category = categoryMapper.toEntity(categoryDTO);
         return categoryMapper.toDTO(categoryRepo.save(category));
     }
 
+    @CacheEvict(value = { "allCategories", "allCategoriesByName", "categoryById" }, allEntries = true)
     public Optional<CategoryDTO> update(Long id, CategoryDTO categoryDTO) {
         return categoryRepo.findById(id).map(existingCategory -> {
             existingCategory.setCategoryName(categoryDTO.getCategoryName());
@@ -46,6 +53,7 @@ public class CategoryService {
         });
     }
 
+    @CacheEvict(value = { "allCategories", "allCategoriesByName", "categoryById" }, allEntries = true)
     public boolean delete(Long id) {
         boolean exists = this.existsById(id);
         if (!exists) {
