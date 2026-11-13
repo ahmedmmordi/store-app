@@ -43,6 +43,10 @@ public class ProductController {
     @GetMapping("/{categoryId}/category")
     public ResponseEntity<List<ProductDTO>> findAllByCategoryId(
             @Positive(message = "Category ID must be a positive number.") @PathVariable Long categoryId) {
+        List<ProductDTO> productResponse = productService.findAllByCategoryId(categoryId);
+        if (productResponse.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(productService.findAllByCategoryId(categoryId));
     }
 
