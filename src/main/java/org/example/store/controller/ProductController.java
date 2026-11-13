@@ -47,7 +47,7 @@ public class ProductController {
         if (productResponse.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(productService.findAllByCategoryId(categoryId));
+        return ResponseEntity.ok(productResponse);
     }
 
     @PostMapping("")
