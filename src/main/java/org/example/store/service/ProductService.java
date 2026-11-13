@@ -32,6 +32,12 @@ public class ProductService {
                 .toList();
     }
 
+    @Cacheable(value = "allProductsByCategoryId", key = "#categoryId")
+    public List<ProductDTO> findAllByCategoryId(Long categoryId) {
+        return productRepo.findAllByCategoryId(categoryId).stream().map(productMapper::toDTO)
+                .toList();
+    }
+
     @Cacheable(value = "productById", key = "#id")
     public Optional<ProductDTO> findById(Long id) {
         return productRepo.findById(id).map(productMapper::toDTO);
