@@ -1,14 +1,17 @@
 package org.example.store.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.store.model.dto.DummyProductDTO;
 import org.example.store.service.DummyProductService;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/v1/dummy-products")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class DummyProductController {
     private final DummyProductService dummyProductService;
 
@@ -36,6 +40,12 @@ public class DummyProductController {
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             log.info("Sending Batch Of Size {} At {}", batch.size(), timestamp);
         }).delayElements(Duration.ofSeconds(2));
+    }
+
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux<DummyProductDTO> searchDummyProducts(
+            @RequestParam("q") @NotBlank(message = "Search query must not be blank.") String query) {
+        return dummyProductService.searchDummyProducts(query);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

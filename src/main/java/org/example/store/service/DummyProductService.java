@@ -33,4 +33,15 @@ public class DummyProductService {
                         "Failed To Fetch Product With ID '" + id + "', Status: " + clientResponse.statusCode())))
                 .bodyToMono(DummyProductDTO.class);
     }
+
+    @Cacheable(value = "dummyProductsBySearchQuery", key = "#query")
+    public Flux<DummyProductDTO> searchDummyProducts(String query) {
+        return webClient.get().uri(uriBuilder -> uriBuilder.path("/products/search").queryParam("q", query).build())
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,
+                        clientResponse -> Mono.error(new DummyProductFetchException(
+                                "Failed To Search Products, Status: " + clientResponse.statusCode())))
+                .bodyToMono(DummyProductResponseDTO.class)
+                .flatMapMany(response -> Flux.fromIterable(response.getProducts()));
+    }
 }
